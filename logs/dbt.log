@@ -1,0 +1,8 @@
+
+
+============================== 2023-06-07 07:31:09.779557 | 4b3c4f74-2772-4f9a-8873-a66175180af4 ==============================
+[0m07:31:09.779557 [info ] [MainThread]: Running with dbt=1.4.6
+[0m07:31:09.782564 [debug] [MainThread]: running dbt with arguments {'write_json': True, 'use_colors': True, 'printer_width': 120, 'version_check': True, 'partial_parse': True, 'static_parser': True, 'profiles_dir': 'C:\\Projects\\Master_dateconvertor\\Normalisation\\normalize', 'send_anonymous_usage_stats': False, 'quiet': False, 'no_print': False, 'cache_selected_only': False, 'skip_profile_setup': False, 'which': 'init', 'indirect_selection': 'eager'}
+[0m07:31:09.783663 [debug] [MainThread]: Tracking: do not track
+[0m07:31:09.802680 [info ] [MainThread]: Setting up your profile.
+[0m07:31:21.172943 [debug] [MainThread]: Flushing usage events
