@@ -1,13 +1,10 @@
 
-{% set cust_domains = ["hpe.com", "arubanetworks.com", "hpe.hr","hpecds.com","jpn.hpe.com","hpecds.com"] %}
 
 select
 customer_domain,
 {% if customer_domain == 'hpe.com' %}
-    'internal'    customer_type
-{% else %}
-        'external'   customer_type
-{% endif %},
+    'internal'    customer_type,
+{% endif %}
 _airbyte_ab_id,
 _airbyte_emitted_at,
 {{ current_timestamp() }} as _airbyte_normalized_at,
