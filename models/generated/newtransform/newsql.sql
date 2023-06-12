@@ -2,9 +2,11 @@
 
 select
 customer_domain,
-{% if customer_domain == 'hpe.com' %}
+{% for a in customer_domain %}
+{% if a == 'hpe.com' %}
     'internal'    customer_type,
 {% endif %}
+{% endfor %}
 _airbyte_ab_id,
 _airbyte_emitted_at,
 {{ current_timestamp() }} as _airbyte_normalized_at,
