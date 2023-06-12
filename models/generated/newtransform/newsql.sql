@@ -5,6 +5,8 @@ customer_domain,
 {% for a in customer_domain %}
 {% if a == 'hpe.com' %}
     'internal'    customer_type,
+    else
+    'external'    customer_type,
 {% endif %}
 {% endfor %}
 _airbyte_ab_id,
