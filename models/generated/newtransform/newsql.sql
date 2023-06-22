@@ -1,35 +1,42 @@
-{{
-  config(
-    materialized='table',
-    unique_key='id'
-  )
-}}
-
-{%- set newsql = ref('date_convertor_ab3') ~ '_new' -%}
-{%- set customer_type = 'new_column' -%}
-
-{% set custom_values = dbt_utils.get_column_values(
-    table=ref('date_convertor_ab3'),
-    column='customer_domain'
-) %}
-{% for a in customer_values %}
-    {% if a == 'hpe.com' %}
-        'internal'    customer_type
-    else
-        'external'    customer_type
-    {% endif %}
-{% endfor %}
-
-
-CREATE TABLE {{ newsql }} AS (
+{{ config(
+    indexes = [{'columns':['_airbyte_emitted_at'],'type':'btree'}],
+    unique_key = '_airbyte_ab_id',
+    schema = "public",
+    post_hook = ["
+                    {%
+                        set scd_table_relation = adapter.get_relation(
+                            database=this.database,
+                            schema=this.schema,
+                            identifier='date_convertor_scd'
+                        )
+                    %}
+                    {%
+                        if scd_table_relation is not none
+                    %}
+                    {%
+                            do adapter.drop_relation(scd_table_relation)
+                    %}
+                    {% endif %}
+                        "],
+    tags = [ "top-level" ]
+) }}
+-- Final base SQL model
+-- depends_on: {{ ref('date_convertor_ab3') }}
+{% set newsql = ref('date_convertor_ab3') ~ '_new' %}
+{% set cust_dom = 'new_column' %}
 select
-customer_domain,
-NULL::dbt_utils.type_string() AS {{ customer_type }},
+coalesce(customer_domain,'no_value') as customer_domain,
 _airbyte_ab_id,
 _airbyte_emitted_at,
 {{ current_timestamp() }} as _airbyte_normalized_at,
-_airbyte_date_convertor_hashid
+_airbyte_date_convertor_hashid,
+{% if case_contact_email != NULL %}
+     RIGHT(case_contact_email, ( Charindex('@', case_contact_email) + 1 )) AS {{ cust_dom }}
+{% else %}
+    case_contact_email AS {{ cust_dom }}
+{% endif %}
 from {{ ref('date_convertor_ab3') }}
-
+-- date_convertor from {{ source('public', '_airbyte_raw_date_convertor') }}
 where 1 = 1
-)
+
+
