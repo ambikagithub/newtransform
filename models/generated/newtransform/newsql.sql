@@ -23,7 +23,7 @@
 -- Final base SQL model
 -- depends_on: {{ ref('date_convertor_ab3') }}
 {% set newsql = ref('date_convertor_ab3') ~ '_new' %}
-{% set cust_dom = 'new_column' %}
+{% set cust_dom = 'new_customer_domain' %}
 select
 coalesce(customer_domain,'no_value') as customer_domain,
 _airbyte_ab_id,
@@ -31,7 +31,7 @@ _airbyte_emitted_at,
 {{ current_timestamp() }} as _airbyte_normalized_at,
 _airbyte_date_convertor_hashid,
 {% if case_contact_email != NULL %}
-     RIGHT(case_contact_email, ( Charindex('@', case_contact_email) + 1 )) AS {{ cust_dom }}
+    substring(case_contact_email, POSITION('@' IN case_contact_email) + 1) AS {{ cust_dom }}
 {% else %}
     case_contact_email AS {{ cust_dom }}
 {% endif %}
