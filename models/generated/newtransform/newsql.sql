@@ -27,7 +27,7 @@
 select
 coalesce(customer_domain,'no_value') as customer_domain,
 substring(case_contact_email, POSITION('@' IN case_contact_email) + 1) AS {{ cust_dom }},
-{% if new_customer_domain == "hpe.com" %}
+{% if customer_domain == "hpe.com" %}
     'internal'    customer_type
 {% else %}
     'external'   customer_type
