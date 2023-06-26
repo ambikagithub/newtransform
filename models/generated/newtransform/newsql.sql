@@ -22,15 +22,20 @@
 ) }}
 -- Final base SQL model
 -- depends_on: {{ ref('date_convertor_ab3') }}
-{% set newsql = ref('date_convertor_ab3') ~ '_new' %}
 {% set cust_dom = 'new_customer_domain' %}
+{% set cust_domains = ["hpe.com","arubanetworks.com","hpe.hr","hpecds.com","jpn.hpe.com","hpecds.com"] %}
 select
 coalesce(customer_domain,'no_value') as customer_domain,
+substring(case_contact_email, POSITION('@' IN case_contact_email) + 1) AS {{ cust_dom }},
+{% if cust_dom == 'hpe.com' %}
+    'internal'    customer_type
+{% else %}
+    'external'   customer_type
+{% endif %},
 _airbyte_ab_id,
 _airbyte_emitted_at,
 {{ current_timestamp() }} as _airbyte_normalized_at,
-_airbyte_date_convertor_hashid,
-substring(case_contact_email, POSITION('@' IN case_contact_email) + 1) AS {{ cust_dom }}
+_airbyte_date_convertor_hashid
 from {{ ref('date_convertor_ab3') }}
 -- date_convertor from {{ source('public', '_airbyte_raw_date_convertor') }}
 where 1 = 1
