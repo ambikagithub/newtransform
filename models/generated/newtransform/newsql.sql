@@ -27,11 +27,11 @@
 select
 coalesce(customer_domain,'no_value') as customer_domain,
 substring(case_contact_email, POSITION('@' IN case_contact_email) + 1) AS {{ cust_dom }},
-{% if customer_domain == "hpe.com" %}
-    'internal'    customer_type
-{% else %}
-    'external'   customer_type
-{% endif %},
+CASE
+    WHEN customer_domain = 'hpe.com' THEN 'internal'
+    WHEN customer_domain = 'arubanetworks.com' THEN 'internal'
+    ELSE 'external'
+END AS customer_type,
 _airbyte_ab_id,
 _airbyte_emitted_at,
 {{ current_timestamp() }} as _airbyte_normalized_at,
